@@ -17,9 +17,39 @@ FMT_SRC := $(wildcard src/*.c src/*.h tests/*.c)
 OBJ     := $(patsubst src/%.c,$(BUILD)/%.o,$(SRC))
 LIB_OBJ := $(filter-out $(BUILD)/main.o,$(OBJ))
 
-.PHONY: all clean format check-format
+.PHONY: all test run clean format check-format
 
 all: $(LIB)
+
+TEST_SRC := $(wildcard tests/*.c)
+TEST_BIN := $(patsubst tests/%.c,$(BUILD)/tests/%,$(TEST_SRC))
+
+test: $(TEST_BIN)
+	@set -e; for test_bin in $(TEST_BIN); do \
+		echo -e "Running $$test_bin:\n..."; \
+		./$$test_bin; \
+		echo -e "...\n"; \
+	done
+
+RUN_ARG := $(if $(filter run,$(firstword $(MAKECMDGOALS))),$(word 2,$(MAKECMDGOALS)))
+RUN_FILE := $(if $(filter %.c,$(RUN_ARG)),$(RUN_ARG),$(RUN_ARG).c)
+RUN_BIN := $(BUILD)/tests/$(basename $(notdir $(RUN_FILE)))
+
+ifneq ($(RUN_ARG),)
+run: $(RUN_BIN)
+	./$(RUN_BIN)
+
+.PHONY: $(RUN_ARG)
+$(RUN_ARG):
+	@:
+else
+run:
+	@echo 'Usage: make run <test-file> (for example: make run smoke.c)'; exit 2
+endif
+
+$(BUILD)/tests/%: tests/%.c $(LIB)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $< $(LIB) $(LDFLAGS) -o $@
 
 $(LIB): $(OBJ)
 	$(AR) rcs $@ $^
