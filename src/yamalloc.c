@@ -1,3 +1,4 @@
+#include "yamalloc.h"
 #include <stddef.h>
 #include <stdio.h>
 
