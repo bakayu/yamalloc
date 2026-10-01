@@ -5,10 +5,10 @@ LIB		:= build/libyamalloc.a
 
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 
-CFLAGS  := -Wall -Wextra -g -std=gnu11 -DPACK_VERSION='"$(VERSION)"' \
+CFLAGS  := -Wall -Wextra -g -std=gnu11 -pedantic -ggdb -DPACK_VERSION='"$(VERSION)"' \
            $(EXTRA_CFLAGS)
 
-CPPFLAGS += -Iinclude
+CPPFLAGS += -Iinclude -Isrc
 
 LDFLAGS ?=
 

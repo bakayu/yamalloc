@@ -1,9 +1,9 @@
-#include <stddef.h>
+#ifndef YAMALLOC_H
+#define YAMALLOC_H
 
-#define CAPACITY 640000
+#include <stdint.h>
 
-void *heap_alloc(size_t size);
-
+void *heap_alloc(uint32_t size);
 void heap_free(void *ptr);
 
-void heap_collect();
+#endif
