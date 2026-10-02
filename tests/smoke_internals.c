@@ -2,8 +2,8 @@
 #include <stdio.h>
 
 int main(void) {
-    struct heapinfo_t heap = {0};
-    if (heap_init(&heap) == HEAP_INIT_ERROR) {
+    heapinfo_t heap = {0};
+    if (heap_init() == HEAP_INIT_ERROR) {
         printf("Failed to init heap.");
         return -1;
     }
