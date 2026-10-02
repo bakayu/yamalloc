@@ -18,6 +18,7 @@ typedef struct heapchunk_t {
 typedef struct heapinfo_t {
     struct heapchunk_t *start;
     size_t avail;
+    size_t mapped_size;
 } heapinfo_t;
 
 heap_e heap_init(void);
