@@ -1,9 +1,9 @@
 #ifndef YAMALLOC_H
 #define YAMALLOC_H
 
-#include <stdint.h>
+#include <stddef.h>
 
-void *heap_alloc(uint32_t size);
+void *heap_alloc(size_t size);
 void heap_free(void *ptr);
 
 #endif
