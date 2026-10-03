@@ -98,3 +98,42 @@ void *heap_alloc(size_t size) {
 
     return NULL;
 }
+
+void heap_free(void *ptr) {
+    if (ptr == NULL || !heap_initialized) {
+        return;
+    }
+
+    for (heapchunk_t *chunk = heap.start; chunk != NULL; chunk = chunk->next) {
+        void *payload = (unsigned char *)chunk + header_size();
+
+        if (payload != ptr) {
+            continue;
+        }
+
+        if (chunk->free) {
+            return;
+        }
+
+        chunk->free = true;
+        heap.avail += chunk->size;
+
+        heapchunk_t *current = heap.start;
+        while (current != NULL && current->next != NULL) {
+            heapchunk_t *next = current->next;
+            unsigned char *current_end =
+                (unsigned char *)current + header_size() + current->size;
+
+            if (current->free && next->free &&
+                current_end == (unsigned char *)next) {
+                current->size += header_size() + next->size;
+                current->next = next->next;
+                heap.avail += header_size();
+            } else {
+                current = next;
+            }
+        }
+
+        return;
+    }
+}
