@@ -4,6 +4,7 @@
 #include <stdalign.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <sys/mman.h>
 #include <unistd.h>
@@ -51,4 +52,49 @@ heap_e heap_init(void) {
     heap_initialized = true;
 
     return HEAP_INIT_OK;
+}
+
+static void split_chunk(heapchunk_t *chunk, size_t size) {
+    size_t overhead = header_size();
+
+    if (chunk->size < size + overhead + MIN_SPLIT_SIZE) {
+        return;
+    }
+
+    unsigned char *payload = (unsigned char *)chunk + overhead;
+    heapchunk_t *remainder = (heapchunk_t *)(payload + size);
+
+    remainder->size = chunk->size - size - overhead;
+    remainder->free = true;
+    remainder->next = chunk->next;
+
+    chunk->size = size;
+    chunk->next = remainder;
+}
+
+void *heap_alloc(size_t size) {
+    if (size == 0 || size > SIZE_MAX - (ALIGNMENT - 1)) {
+        return NULL;
+    }
+
+    size = align_size(size);
+    if (!heap_initialized && heap_init() == HEAP_INIT_OK) {
+        return NULL;
+    }
+
+    for (heapchunk_t *chunk = heap.start; chunk != NULL; chunk = chunk->next) {
+        if (!chunk->free || chunk->size < size) {
+            continue;
+        }
+
+        size_t original_size = chunk->size;
+        split_chunk(chunk, size);
+        chunk->free = false;
+
+        heap.avail -= original_size - chunk->size;
+
+        return (unsigned char *)chunk + header_size();
+    }
+
+    return NULL;
 }
