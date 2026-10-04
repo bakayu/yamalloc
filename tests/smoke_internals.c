@@ -7,5 +7,7 @@ int main(void) {
         return -1;
     }
 
+    printf("heap initialized.\n");
+
     return 0;
 }
