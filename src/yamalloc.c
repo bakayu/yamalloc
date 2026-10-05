@@ -145,17 +145,16 @@ void print_allocator_state(void) {
     }
 
     printf("=== Allocator State ===\n");
-    printf("Mapping: %p (%zu bytes)\n", (void *)heap.start,
-           heap.mapped_size);
+    printf("Mapping: %p (%zu bytes)\n", (void *)heap.start, heap.mapped_size);
     printf("Available payload bytes: %zu\n", heap.avail);
     printf("Chunks (in address order):\n");
 
     size_t index = 0;
     for (heapchunk_t *current = heap.start; current != NULL;
          current = current->next, index++) {
-        printf("  [%zu] header=%p payload=%p size=%zu free=%s next=%p\n",
-               index, (void *)current,
-               (unsigned char *)current + header_size(), current->size,
-               current->free ? "yes" : "no", (void *)current->next);
+        printf("  [%zu] header=%p payload=%p size=%zu free=%s next=%p\n", index,
+               (void *)current, (unsigned char *)current + header_size(),
+               current->size, current->free ? "yes" : "no",
+               (void *)current->next);
     }
 }

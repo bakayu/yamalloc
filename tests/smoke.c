@@ -42,12 +42,14 @@ int main() {
 
     // Test large allocation
     printf("\n3. Large allocation test:\n");
-    // NOTE: since we use mmap to map single page, our allocator has 4096KB,
-    // of data to work with, the max allocation we can do is 4064KB.
-    // 4096KB - HEADER SIZE => 4096 - 32 = 4064KB
+    // NOTE: since we use mmap to map single page, our allocator has
+    // access to 4096KB of data to work with, the max allocation we can do is
+    // 4064KB (4096KB - HEADER SIZE => 4096 - 32 = 4064KB)
     void *large = heap_alloc(4064);
-    if (large == NULL)
+    if (large == NULL) {
         printf("FAILED\n");
+        return 1;
+    }
     printf("-- Allocated large block\n");
     print_allocator_state();
 
