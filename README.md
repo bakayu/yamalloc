@@ -33,7 +33,7 @@ The allocator should return suitably aligned memory for ordinary C objects. Allo
 
 #### Current implementation limits
 
-The current allocator maps one system page and manages blocks inside it (typically `4096KB` on a `64bit` system). It does not yet grow the region when it runs out of space, so large allocations or enough smaller allocations can exhaust it.
+The current allocator maps one system page and manages blocks inside it (typically `4096B` on a `64bit` system). It does not yet grow the region when it runs out of space, so large allocations or enough smaller allocations can exhaust it.
 
 ### Design
 
